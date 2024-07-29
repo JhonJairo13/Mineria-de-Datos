@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detección de Quemaduras</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        .recommendations {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #d1ecf1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Detección de Quemaduras</h1>
+        <p class="text-center">Sube una imagen de una quemadura (JPG o PNG) para obtener una predicción.</p>
+        
+        <form action="/" method="POST" enctype="multipart/form-data" class="text-center">
+            <div class="form-group">
+                <input type="file" name="file" accept=".jpg, .jpeg, .png" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Subir Imagen</button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                <h4>Resultado de la Predicción:</h4>
+                <p class="success">{{ result }}</p>
+                {% if confidence %}
+                    <p>Confianza: {{ confidence | round(2) }}%</p>
+                {% endif %}
+            </div>
+
+            <div class="recommendations">
+                <h4>Recomendaciones:</h4>
+                {% if "Primer grado" in result %}
+                    <p>Para quemaduras de primer grado:</p>
+                    <ul>
+                        <li>Enfríe la quemadura con agua fría durante 10-15 minutos.</li>
+                        <li>Use una crema hidratante o gel de aloe vera.</li>
+                        <li>Evite romper las ampollas.</li>
+                        <li>Si hay dolor, considere tomar un analgésico de venta libre.</li>
+                    </ul>
+                {% elif "Segundo grado" in result %}
+                    <p>Para quemaduras de segundo grado:</p>
+                    <ul>
+                        <li>Enfríe la quemadura con agua fría durante 10-15 minutos.</li>
+                        <li>Cubra la quemadura con un vendaje limpio y seco.</li>
+                        <li>No aplique hielo directamente sobre la quemadura.</li>
+                        <li>Considere consultar a un médico si la quemadura es extensa.</li>
+                    </ul>
+                {% elif "Tercer grado" in result %}
+                    <p>Para quemaduras de tercer grado:</p>
+                    <ul>
+                        <li>No enfríe la quemadura con agua.</li>
+                        <li>Cubra la quemadura con un paño limpio y seco.</li>
+                        <li>Busque atención médica inmediata.</li>
+                    </ul>
+                {% else %}
+                    <p>No se detectó una quemadura significativa.</p>
+                {% endif %}
+            </div>
+
+            
+            <div class="text-center">
+                <h4>Imagen de la Predicción:</h4>
+                <img src="{{ url_for('media', filename='prediction.png') }}" alt="Predicción" class="img-fluid">
+            </div>
+        
+        {% elif error %}
+            <div class="result">
+                <h4>Resultado de la Predicción:</h4>
+                <p class="error">{{ error }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
